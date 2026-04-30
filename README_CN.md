@@ -24,6 +24,8 @@
 | [Stroke.TrayIcon](Stroke.TrayIcon) | 提供系统托盘图标，支持暂停 / 恢复手势与退出程序控制。 |
 | [Stroke.TranslateMate](Stroke.TranslateMate) | 基于剪贴板的中英文互译插件，使用百度翻译 API，并集成有道词典发音与生词本。 |
 | [Stroke.PaddleOcrMate](Stroke.PaddleOcrMate) | 基于 PaddleOCR 的图片文字识别，通过剪贴板图像或文件路径触发。 |
+| Stroke.Tip | 屏幕下方显示提示文字，支持字体颜色, 大小, 显示时长。|
+| Stroke.MinToTray | 将当前窗口缩小到系统托盘。|
 
 欢迎贡献新的插件。
 

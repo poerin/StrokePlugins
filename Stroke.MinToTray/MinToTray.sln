@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11716.220 stable
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinToTray", "MinToTray\MinToTray.csproj", "{E63777A7-3CBD-4711-AB0B-FB49E8AD441D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinToTray", "MinToTray\MinToTray.csproj", "{387A8992-9707-4185-B790-637B7E3553DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroke", "..\Stroke\Stroke\Stroke.csproj", "{4BF7E1C7-8683-47A3-99FF-76ECEDA97BB4}"
 EndProject
@@ -13,10 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E63777A7-3CBD-4711-AB0B-FB49E8AD441D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E63777A7-3CBD-4711-AB0B-FB49E8AD441D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E63777A7-3CBD-4711-AB0B-FB49E8AD441D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E63777A7-3CBD-4711-AB0B-FB49E8AD441D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{387A8992-9707-4185-B790-637B7E3553DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{387A8992-9707-4185-B790-637B7E3553DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{387A8992-9707-4185-B790-637B7E3553DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{387A8992-9707-4185-B790-637B7E3553DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4BF7E1C7-8683-47A3-99FF-76ECEDA97BB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4BF7E1C7-8683-47A3-99FF-76ECEDA97BB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BF7E1C7-8683-47A3-99FF-76ECEDA97BB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -26,6 +26,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9F1EC9BC-E8AD-42D4-97EC-F9958AF60EF9}
+		SolutionGuid = {FEA9AA38-28C5-4FEF-B570-4FA2ED5A57A1}
 	EndGlobalSection
 EndGlobal

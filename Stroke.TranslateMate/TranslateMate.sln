@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.5.11716.220 stable
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranslateMate", "TranslateMate\TranslateMate.csproj", "{458B005F-0390-43EE-97C8-43907E3E5D81}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranslateMate", "TranslateMate\TranslateMate.csproj", "{A61D8959-AEB2-4032-947B-26658B1A49C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{458B005F-0390-43EE-97C8-43907E3E5D81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{458B005F-0390-43EE-97C8-43907E3E5D81}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{458B005F-0390-43EE-97C8-43907E3E5D81}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{458B005F-0390-43EE-97C8-43907E3E5D81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A61D8959-AEB2-4032-947B-26658B1A49C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A61D8959-AEB2-4032-947B-26658B1A49C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A61D8959-AEB2-4032-947B-26658B1A49C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A61D8959-AEB2-4032-947B-26658B1A49C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {8099EF2A-B67A-4A3C-B71D-AF53ADBCE529}
+		SolutionGuid = {63289DDD-C0D7-44B9-BD86-D2488C98D64A}
 	EndGlobalSection
 EndGlobal

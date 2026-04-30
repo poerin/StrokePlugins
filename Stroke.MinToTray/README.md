@@ -29,7 +29,6 @@ The plugin exposes a method `MinimizeToTray(IntPtr hWnd = default, string tipTex
 Example code:
 
 ```csharp
-// Minimise the current window to the tray.
 MinToTray.MinimizeToTray();
 ```
 

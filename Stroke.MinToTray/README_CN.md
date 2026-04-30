@@ -1,4 +1,4 @@
-﻿# Stroke.MinToTray
+# Stroke.MinToTray
 
 为 [Stroke](https://github.com/poerin/Stroke) 鼠标手势引擎提供缩小窗口到系统托盘功能的插件。它在通知区域显示该软件图标和窗口文字，点击图标可恢复显示。
 
@@ -29,7 +29,6 @@
 以下为示例代码。
 
 ```csharp
-// 缩小当前窗口到托盘。
 MinToTray.MinimizeToTray();
 ```
 

@@ -31,7 +31,7 @@
 Tip.ShowTipText("保存成功", Color.White, 26f, 1000);
 
 // 显示绿色提示文字，采用默认字号与时长。
-Tip.ShowTipText("手势识别中...", Color.Lime);
+Tip.ShowTipText("手势识别中…", Color.Lime);
 ```
 
 ## 许可证

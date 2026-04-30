@@ -24,6 +24,9 @@ This repository hosts a set of plugins that extend Stroke’s capabilities. Each
 | [Stroke.TrayIcon](Stroke.TrayIcon) | System tray icon with pause / resume and exit controls. |
 | [Stroke.TranslateMate](Stroke.TranslateMate) | Clipboard-triggered Chinese-English translation via Baidu Translation API, with Youdao Dictionary pronunciation and vocabulary notebook. |
 | [Stroke.PaddleOcrMate](Stroke.PaddleOcrMate) | Optical character recognition (OCR) via PaddleOCR, driven by clipboard images or file paths. |
+| [Stroke.Tip](Stroke.Tip) | Displays a tip text at the bottom of the screen; supports custom font colour, size, and display duration. |
+| [Stroke.MinToTray](Stroke.MinToTray) | Minimises the current window to the system tray. |
+
 
 Contributions for new plugins are welcome.
 

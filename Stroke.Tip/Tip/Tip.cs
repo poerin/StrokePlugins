@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -9,7 +9,10 @@ namespace Stroke
 {
     public static class Tip
     {
-		public static void ShowTipText(string text, Color color, float fontSize = 26f, int durationMs = 500)
+        private static readonly List<TipForm> _activeTips = new List<TipForm>();
+        private static readonly object _lock = new object();
+
+        public static void ShowTipText(string text, Color color, float fontSize = 26f, int durationMs = 500)
         {
             if (Application.MessageLoop)
             {
@@ -17,10 +20,10 @@ namespace Stroke
             }
             else
             {
-                var syncContext = SynchronizationContext.Current;
+                SynchronizationContext syncContext = SynchronizationContext.Current;
                 if (syncContext == null)
                 {
-                    var thread = new Thread(() =>
+                    Thread thread = new Thread(() =>
                     {
                         Application.Run(new TipForm(text, color, fontSize, durationMs));
                     });
@@ -34,9 +37,49 @@ namespace Stroke
             }
         }
 
+        internal static void RegisterTip(TipForm form)
+        {
+            lock (_lock)
+            {
+                _activeTips.Add(form);
+            }
+            RepositionTips();
+        }
+
+        internal static void UnregisterTip(TipForm form)
+        {
+            lock (_lock)
+            {
+                _activeTips.Remove(form);
+            }
+            RepositionTips();
+        }
+
+        private static void RepositionTips()
+        {
+            List<TipForm> tips;
+            lock (_lock)
+            {
+                tips = new List<TipForm>(_activeTips);
+            }
+            Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
+            int baseY = workingArea.Bottom - 100;
+            int spacing = 4;
+            int currentY = baseY;
+            for (int i = tips.Count - 1; i >= 0; i--)
+            {
+                TipForm tipForm = tips[i];
+                currentY -= tipForm.Height + spacing;
+                tipForm.Location = new Point(
+                    (workingArea.Width - tipForm.Width) / 2,
+                    currentY);
+            }
+        }
+
         private static void ShowTip(string text, Color color, float fontSize, int durationMs)
         {
-            var form = new TipForm(text, color, fontSize, durationMs);
+            TipForm form = new TipForm(text, color, fontSize, durationMs);
+            RegisterTip(form);
             form.Show();
             form.Activate();
             form.BringToFront();
@@ -46,6 +89,7 @@ namespace Stroke
     internal class TipForm : Form
     {
         private System.Windows.Forms.Timer _closeTimer;
+        private Font _tipFont;
 
         public TipForm(string text, Color textColor, float fontSize, int durationMs)
         {
@@ -59,42 +103,51 @@ namespace Stroke
             Opacity = 1.0;
 
             Text = text;
-            Font = new Font("微软雅黑", fontSize, FontStyle.Bold);
+            _tipFont = new Font("微软雅黑", fontSize, FontStyle.Bold);
+            Font = _tipFont;
             ForeColor = textColor;
 
-            Size textSize = MeasureTextAccurate(text, Font);
+            Size textSize = MeasureTextAccurate(text, _tipFont);
             Padding = new Padding(16, 8, 16, 8);
             Size = new Size(
                 textSize.Width + Padding.Horizontal,
                 textSize.Height + Padding.Vertical);
 
-            var screen = Screen.PrimaryScreen.WorkingArea;
-            Location = new Point(
-                (screen.Width - Width) / 2,
-                screen.Bottom - Height - 100);
-
             _closeTimer = new System.Windows.Forms.Timer { Interval = durationMs };
             _closeTimer.Tick += (s, e) => { _closeTimer.Stop(); Close(); };
             _closeTimer.Start();
 
-            FormClosed += (s, e) => _closeTimer.Dispose();
+            FormClosed += (s, e) =>
+            {
+                _closeTimer.Dispose();
+                _tipFont.Dispose();
+                Tip.UnregisterTip(this);
+            };
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
-            var g = e.Graphics;
-            g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            Graphics graphics = e.Graphics;
+            graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            var rect = new Rectangle(
+            Rectangle rect = new Rectangle(
                 Padding.Left,
                 Padding.Top,
                 ClientSize.Width - Padding.Horizontal,
                 ClientSize.Height - Padding.Vertical);
 
-            TextRenderer.DrawText(g, Text, Font, rect, ForeColor,
+            int average = (ForeColor.R + ForeColor.G + ForeColor.B) / 3;
+            Color backColor = average < 128 ? Color.FromArgb(248, 248, 248) : Color.FromArgb(8, 8, 8);
+
+            using (SolidBrush backBrush = new SolidBrush(backColor))
+            {
+                graphics.FillRectangle(backBrush, rect);
+            }
+
+            TextRenderer.DrawText(graphics, Text, _tipFont, rect, ForeColor,
                 TextFormatFlags.HorizontalCenter |
                 TextFormatFlags.VerticalCenter |
                 TextFormatFlags.SingleLine |
@@ -103,30 +156,17 @@ namespace Stroke
 
         private static Size MeasureTextAccurate(string text, Font font)
         {
-            using (var bitmap = new Bitmap(1, 1))
-            using (var g = Graphics.FromImage(bitmap))
-            {
-                g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-
-                var format = StringFormat.GenericTypographic;
-                format.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-                SizeF sizeF = g.MeasureString(text, font, PointF.Empty, format);
-
-                int width = (int)Math.Ceiling(sizeF.Width * 1.05);
-                int height = (int)Math.Ceiling(sizeF.Height * 1.05);
-
-                return new Size(width, height);
-            }
+            return TextRenderer.MeasureText(text, font, Size.Empty,
+                TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
         }
 
         protected override CreateParams CreateParams
         {
             get
             {
-                var cp = base.CreateParams;
-                cp.ExStyle |= 0x20; // WS_EX_TRANSPARENT
-                return cp;
+                CreateParams createParams = base.CreateParams;
+                createParams.ExStyle |= 0x20;
+                return createParams;
             }
         }
     }

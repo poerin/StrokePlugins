@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.36422.26
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroke.Tip", "Tip\Stroke.Tip.csproj", "{4DA269DC-3810-435B-83BA-5E9092D81D94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stroke.Tip", "Tip\Tip.csproj", "{4DA269DC-3810-435B-83BA-5E9092D81D94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,19 +1,19 @@
 # Stroke.Tip
 
-A plugin for the [Stroke](https://github.com/poerin/Stroke) mouse gesture engine that provides on‑screen text prompts. It displays tip text at the bottom of the primary screen.
+An on‑screen prompt plugin for the [Stroke](https://github.com/poerin/Stroke) mouse gesture engine. It renders tip text at the bottom of the primary display.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Requirements](#requirements)
 - [Usage](#usage)
-    - [Gesture Script](#gesture-script)
+    - [Gesture Scripts](#gesture-scripts)
 - [License](#license)
 
 ## Features
 
-- Text prompt: displays tip text at the bottom of the primary screen.
-- Customizable: allows customisation of text colour, size, and display duration via parameters.
+- **Text prompt**: Renders tip text at the bottom of the primary display.
+- **Customizable**: Supports custom text color, font size, and display duration through method parameters.
 
 ## Requirements
 
@@ -22,15 +22,18 @@ A plugin for the [Stroke](https://github.com/poerin/Stroke) mouse gesture engine
 
 ## Usage
 
-### Gesture Script
+### Gesture Scripts
 
-The plugin exposes a single public method `ShowTipText(string text, Color color, float fontSize = 26f, int durationMs = 500)` to display tip text.
-
-Example code:
+The plugin exposes a single public method, `ShowTipText`, which accepts the tip text, a color, an optional font size, and an optional display duration in milliseconds.
 
 ```csharp
-// Display white tip text, size 26, for 1 second
+// Display white tip text at size 26 for one second.
 Tip.ShowTipText("Save successful", Color.White, 26f, 1000);
 
-// Display green tip text using default size and duration
+// Display green tip text with default size and duration.
 Tip.ShowTipText("Recognising gesture...", Color.Lime);
+```
+
+## License
+
+Distributed under the MIT License.

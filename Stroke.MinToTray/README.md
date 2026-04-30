@@ -7,7 +7,7 @@ A plugin for the [Stroke](https://github.com/poerin/Stroke) mouse gesture engine
 - [Features](#features)
 - [Requirements](#requirements)
 - [Usage](#usage)
-    - [Gesture Script](#gesture-script)
+    - [Gesture Scripts](#gesture-scripts)
 - [License](#license)
 
 ## Features
@@ -22,17 +22,17 @@ A plugin for the [Stroke](https://github.com/poerin/Stroke) mouse gesture engine
 
 ## Usage
 
-### Gesture Script
+### Gesture Scripts
 
-The plugin provides a public method `MinimizeToTray(IntPtr hWnd = default, string tipText = null, Icon customIcon = null)` to minimise a window to a tray icon.
+The plugin exposes a method `MinimizeToTray(IntPtr hWnd = default, string tipText = null, Icon customIcon = null)` to minimise a window to a tray icon.
 
 Example code:
 
 ```csharp
-// Minimise the current window to the tray
+// Minimise the current window to the tray.
 MinToTray.MinimizeToTray();
 ```
 
 ## License
 
-This repository is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Distributed under the MIT License.

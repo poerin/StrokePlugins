@@ -68,6 +68,8 @@ namespace Stroke
         {
             var form = new TipForm(text, color, fontSize, durationMs);
             form.Show();
+            form.Activate();    //修复不显示的问题
+            form.BringToFront();
         }
     }
 

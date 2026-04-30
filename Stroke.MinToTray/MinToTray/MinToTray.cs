@@ -151,7 +151,7 @@ namespace Stroke
 
         private static string GetWindowTitle(IntPtr hWnd)
         {
-            const int nChars = 256;
+            const int nChars = 63;  //System.ArgumentOutOfRangeException: 文本长度必须少于 64 个字符。
             var buff = new System.Text.StringBuilder(nChars);
             if (GetWindowText(hWnd, buff, nChars) > 0)
                 return buff.ToString();

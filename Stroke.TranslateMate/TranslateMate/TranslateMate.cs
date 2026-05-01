@@ -5,24 +5,28 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using System.Windows.Forms;
-
 
 namespace Stroke
 {
     public static class TranslateMate
     {
-        public static string AppId;
-        public static string SecretKey;
-        public static string From;
-        public static string To;
-        public static bool UseAudio;
-        public static bool UseGlossary;
+        public static string SecretId = "";
+        public static string SecretKey = "";
+        public static string Provider = "";
+        public static string From = "en";
+        public static string To = "zh";
+        public static bool UseAudio = true;
+        public static bool UseGlossary = true;
+        public static string Region = "ap-guangzhou";
+
+        public static string AppId
+        {
+            get => SecretId;
+            set => SecretId = value;
+        }
 
         private static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private static bool isGlossaryChanged;
@@ -30,6 +34,8 @@ namespace Stroke
         private static System.Threading.Timer glossarySaveTimer;
         private static ClipboardListener clipboardListener;
         private static bool isTranslating;
+
+        private static ITranslator translator;
 
         [DllImport("winmm.dll")]
         public static extern uint mciSendString(string command, string returnString, uint returnLength, uint callback);
@@ -56,8 +62,7 @@ namespace Stroke
                         try { File.Delete(filePath); } catch { }
                     }
                 }
-                catch
-                { }
+                catch { }
             }
 
             if (File.Exists(filePath))
@@ -87,8 +92,7 @@ namespace Stroke
         {
             try
             {
-                if (!isGlossaryChanged)
-                    return;
+                if (!isGlossaryChanged) return;
 
                 string glossaryPath = Path.Combine(BaseDirectory, "Glossary.csv");
                 using (StreamWriter writer = new StreamWriter(glossaryPath))
@@ -100,19 +104,11 @@ namespace Stroke
                 }
                 isGlossaryChanged = false;
             }
-            catch
-            {
-            }
+            catch { }
         }
 
         static TranslateMate()
         {
-            AppId = "";
-            SecretKey = "";
-            From = "en";
-            To = "zh";
-            UseAudio = true;
-            UseGlossary = true;
             isGlossaryChanged = false;
             glossary = new Dictionary<string, int>();
             glossarySaveTimer = new System.Threading.Timer(SaveGlossary);
@@ -147,68 +143,52 @@ namespace Stroke
             clipboardListener.Do += async delegate
             {
                 string text = Clipboard.GetText();
-                if (text.Length != 0)
+                if (text.Length == 0) return;
+
+                bool isEnglish = true;
+                Random random = new Random(default(Guid).GetHashCode());
+
+                for (int index = 0, nonAsciiCount = 0; index < 16; index++)
                 {
-                    bool isEnglish = true;
-                    Random random = new Random(default(Guid).GetHashCode());
-
-                    for (int index = 0, nonAsciiCount = 0; index < 16; index++)
+                    if (text[random.Next(0, text.Length)] > '\u0080')
                     {
-                        if (text[random.Next(0, text.Length)] > '\u0080')
-                        {
-                            nonAsciiCount++;
-                        }
-                        if (nonAsciiCount > 8)
-                        {
-                            isEnglish = false;
-                            break;
-                        }
+                        nonAsciiCount++;
                     }
-
-                    text = ((!isEnglish) ? text.Replace("\r\n", "") : text.Replace("-\r\n", "").Replace("\r\n", " "));
-
-                    if (isTranslating)
+                    if (nonAsciiCount > 8)
                     {
-                        if (isEnglish)
-                        {
-                            From = "en";
-                            To = "zh";
-                        }
-                        else
-                        {
-                            From = "zh";
-                            To = "en";
-                        }
-
-                        string translation = await Query(text);
-                        if (translation != "")
-                        {
-                            DisplayText(translation);
-                        }
-
-                        if (isEnglish && Regex.IsMatch(text, "^ ?[0-9a-zA-Z]+ ?$"))
-                        {
-                            text = text.Trim(' ');
-                            if (Regex.IsMatch(text, "^[A-Z][a-z]+$"))
-                            {
-                                text = text.ToLower();
-                            }
-                            if (UseAudio)
-                            {
-                                PlayAudio(text);
-                            }
-                            if (UseGlossary)
-                            {
-                                WordToGlossary(text);
-                            }
-                        }
+                        isEnglish = false;
+                        break;
                     }
-                    else
-                    {
-                        DisplayText(text);
-                    }
-                    clipboardListener.Listening = false;
                 }
+
+                text = (!isEnglish) ? text.Replace("\r\n", "") : text.Replace("-\r\n", "").Replace("\r\n", " ");
+
+                if (isTranslating)
+                {
+                    if (isEnglish) { From = "en"; To = "zh"; }
+                    else { From = "zh"; To = "en"; }
+
+                    string translation = await Query(text);
+                    if (!string.IsNullOrEmpty(translation))
+                    {
+                        DisplayText(translation);
+                    }
+
+                    if (isEnglish && Regex.IsMatch(text, "^ ?[0-9a-zA-Z]+ ?$"))
+                    {
+                        text = text.Trim(' ');
+                        if (Regex.IsMatch(text, "^[A-Z][a-z]+$"))
+                            text = text.ToLower();
+
+                        if (UseAudio) PlayAudio(text);
+                        if (UseGlossary) WordToGlossary(text);
+                    }
+                }
+                else
+                {
+                    DisplayText(text);
+                }
+                clipboardListener.Listening = false;
             };
         }
 
@@ -249,23 +229,16 @@ namespace Stroke
             label.MouseMove += ((object sender, MouseEventArgs e) =>
             {
                 if (isDragging)
-                {
                     form.Location = new Point(Control.MousePosition.X - dragOffsetX, Control.MousePosition.Y - dragOffsetY);
-                }
             });
             label.MouseUp += ((object sender, MouseEventArgs e) =>
             {
                 if (e.Button == MouseButtons.Left && isDragging)
-                {
                     isDragging = false;
-                }
             });
             label.MouseClick += ((object sender, MouseEventArgs e) =>
             {
-                if (e.Button == MouseButtons.Right)
-                {
-                    form.Close();
-                }
+                if (e.Button == MouseButtons.Right) form.Close();
             });
             label.MouseDoubleClick += ((object sender, MouseEventArgs e) =>
             {
@@ -275,41 +248,11 @@ namespace Stroke
             form.Show();
         }
 
-        private static async Task<Stream> GetWebStream(string url)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "GET";
-            request.ContentType = "text/html;charset=UTF-8";
-            request.Timeout = 6000;
-            try
-            {
-                WebResponse response = await request.GetResponseAsync();
-                return response.GetResponseStream();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public static async Task<string> Query(string queryText)
         {
-            string salt = (new Random()).Next(100000).ToString();
-            string sign = string.Join("", Array.ConvertAll(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(AppId + queryText + salt + SecretKey)), (o) => o.ToString("x2")));
-            string url = $"http://api.fanyi.baidu.com/api/trans/vip/translate?q={HttpUtility.UrlEncode(queryText)}&from={From}&to={To}&appid={AppId}&salt={salt}&sign={sign}";
-            Stream responseStream = await GetWebStream(url);
-            if (responseStream == null)
-                return string.Empty;
-            StreamReader reader = new StreamReader(responseStream, Encoding.GetEncoding("utf-8"));
-            string result = reader.ReadToEnd();
-            reader.Close();
-            responseStream.Close();
-            StringBuilder translationBuilder = new StringBuilder();
-            foreach (Match match in Regex.Matches(Regex.Match(result, "trans_result\":\\[.*\\]").Value, "{\"src\":\".*?\",\"dst\":\".*?\"}"))
-            {
-                translationBuilder.AppendLine(Regex.Unescape(Regex.Match(match.Value, "\"dst\":\".*\"").Value.Replace("\"dst\":", "")).Trim('\"'));
-            }
-            return translationBuilder.ToString();
+            EnsureTranslator();
+            if (translator == null) return string.Empty;
+            return await translator.TranslateAsync(queryText, From, To);
         }
 
         public static void BeginClipboardDisplay()
@@ -322,6 +265,24 @@ namespace Stroke
         {
             isTranslating = true;
             clipboardListener.Listening = true;
+        }
+
+        private static void EnsureTranslator()
+        {
+            if (translator != null) return;
+
+            string provider = Provider?.ToLowerInvariant();
+            switch (provider)
+            {
+                case "baidu":
+                    translator = new BaiduTranslator(SecretId, SecretKey);
+                    break;
+                case "tencent":
+                    translator = new TencentTranslator(SecretId, SecretKey, Region);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

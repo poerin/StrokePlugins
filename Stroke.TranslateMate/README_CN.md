@@ -1,6 +1,6 @@
 # Stroke.TranslateMate
 
-一个基于剪贴板的翻译插件，适用于 [Stroke](https://github.com/poerin/Stroke) 鼠标手势引擎。它能自动检测中英文文本，调用百度翻译 API 获取结果，并通过可拖拽的半透明浮窗呈现。插件同时集成有道词典发音与生词本功能。
+一个基于剪贴板的翻译插件，适用于 [Stroke](https://github.com/poerin/Stroke) 鼠标手势引擎。它能自动检测中英文文本，调用配置的翻译 API 获取结果，并通过可拖拽的半透明浮窗呈现。插件同时集成有道词典发音与生词本功能。
 
 ## 目录
 
@@ -8,6 +8,7 @@
 - [运行要求](#运行要求)
 - [API 凭证](#api-凭证)
     - [百度翻译 API](#百度翻译-api)
+    - [腾讯云机器翻译 API](#腾讯云机器翻译-api)
 - [使用方法](#使用方法)
     - [手势脚本](#手势脚本)
     - [发音缓存](#发音缓存)
@@ -17,6 +18,7 @@
 ## 功能特性
 
 - **双向互译**：自动检测源语言，支持英文与中文之间的互译。
+- **多供应商支持**：通过设置 `Provider` 属性可在百度翻译与腾讯云机器翻译之间切换。
 - **有道词典发音**：当选中的是单个英文单词时，通过有道词典接口 (`dict.youdao.com`) 播放发音，音频文件本地缓存。
 - **生词本**：每个被翻译的英文单词自动记录至 `Glossary.csv` 文件，按字母顺序排列。
 - **可拖拽浮窗**：翻译结果以半透明的浮动窗口显示在鼠标光标附近。该窗口可随意拖拽，右键单击关闭，双击窗口内容即可将其复制到剪贴板。
@@ -25,16 +27,20 @@
 
 - Stroke 引擎。
 - .NET Framework 4.8 运行时。
-- 有效的百度翻译 API 帐号。
+- 至少拥有一个翻译服务提供商的可用账户（见下文）。
 
 ## API 凭证
 
 ### 百度翻译 API
 
-本插件使用 **百度通用文本翻译 API**。
-
 - **获取凭证**：在 [百度翻译开放平台](https://api.fanyi.baidu.com) 注册或登录后，创建应用并选择“通用文本翻译”服务，即可获取 **APP ID** 与 **密钥**。
 - **计费说明**：提供免费额度，具体配额与计费规则请查阅 [产品详情](https://api.fanyi.baidu.com/product/112)。
+
+### 腾讯云机器翻译 API
+
+- **获取凭证**：登录 [腾讯云控制台](https://console.cloud.tencent.com) 获取 **SecretId** 和 **SecretKey**，并开通 [机器翻译](https://console.cloud.tencent.com/tmt) 服务。
+- **地域参数**：需提供地域（Region），默认为 `ap-guangzhou`。完整地域列表请参考 [API 文档](https://cloud.tencent.com/document/api/551/15615)。
+- **计费说明**：提供免费额度，具体配额与计费规则请查阅 [计费概述](https://cloud.tencent.com/document/product/551/35017)。
 
 ## 使用方法
 
@@ -45,15 +51,32 @@
 - `TranslateMate.BeginClipboardDisplay()` – 显示剪贴板文本（不翻译）。
 - `TranslateMate.BeginClipboardTranslation()` – 翻译剪贴板文本。
 
-下面是一个典型的翻译手势脚本。**执行该手势前，请先选中需要翻译的文本。** 脚本将自动模拟 `Ctrl+C` 复制选中内容，插件检测到剪贴板变化后即开始翻译。
+使用前必须设置 `Provider` 选择翻译后端，并提供对应的凭证。**执行该手势前，请先选中需要翻译的文本。** 脚本将自动模拟 `Ctrl+C` 复制选中内容，插件检测到剪贴板变化后即开始翻译。
+
+**百度翻译示例：**
 
 ```csharp
-TranslateMate.AppId = "您的 APP ID";
+TranslateMate.Provider = "Baidu";
+TranslateMate.SecretId = "您的 APP ID";
 TranslateMate.SecretKey = "您的密钥";
 TranslateMate.BeginClipboardTranslation();
 Base.Activate();
 Base.PressKeys("(c)");
 ```
+
+**腾讯云翻译示例：**
+
+```csharp
+TranslateMate.Provider = "Tencent";
+TranslateMate.SecretId = "您的 SecretId";
+TranslateMate.SecretKey = "您的 SecretKey";
+TranslateMate.Region = "ap-guangzhou";   // 可选，默认为 ap-guangzhou
+TranslateMate.BeginClipboardTranslation();
+Base.Activate();
+Base.PressKeys("(c)");
+```
+
+为了保证向后兼容，`AppId` 属性仍可替代 `SecretId` 使用。
 
 翻译结果会出现在鼠标光标附近的浮动窗口中。窗口可拖拽移动，右键单击关闭，双击窗口内的文本即可将其复制到剪贴板。
 

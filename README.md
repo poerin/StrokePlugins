@@ -42,10 +42,12 @@ Each plugin exposes its functionality through a static class in the `Stroke` nam
 
 **The recommended approach is to use the included scaffolding tool to generate the project structure.**
 
-1. Run `StrokePluginScaffold.exe` located in the `StrokePluginScaffold` directory, follow the prompts, and a solution with the correct namespaces and references will be generated automatically.
+1. Run `StrokePluginScaffold.exe` located in the `StrokePluginTools` directory, follow the prompts, and a solution with the correct namespaces and references will be generated automatically.
 2. Open the `.sln` file inside the newly created `Stroke.<PluginName>` folder and start coding.
 
-**Alternatively, create the project manually:**
+Alternatively, you can use the batch build tool `StrokePluginBatchBuild.exe` (also in `StrokePluginTools`) to compile all plugins and the main engine at once. This tool automatically finds MSBuild, builds every solution in Release configuration, and collects all generated `.dll` and `.exe` files into a `Release` folder at the repository root.
+
+**If you prefer to create the project manually:**
 
 1. Create a new Class Library project targeting **.NET Framework 4.8**.
 2. Use the `Stroke` namespace for your public static class.

@@ -42,8 +42,10 @@
 
 **推荐使用自带的脚手架工具快速生成项目结构。**
 
-1. 运行 `StrokePluginScaffold` 目录下的 `StrokePluginScaffold.exe`，根据提示完成配置，将自动生成包含正确命名空间与引用关系的解决方案。
+1. 运行 `StrokePluginTools` 目录下的 `StrokePluginScaffold.exe`，根据提示完成配置，将自动生成包含正确命名空间与引用关系的解决方案。
 2. 在生成的 `Stroke.<PluginName>` 目录下即可打开 `.sln` 文件开始开发。
+
+此外，你也可以使用批量编译工具 `StrokePluginBatchBuild.exe`（同样位于 `StrokePluginTools` 目录）一次性编译所有插件及主引擎。该工具会自动查找 MSBuild，以 Release 配置构建所有解决方案，并将生成的 `.dll` 和 `.exe` 文件统一收集到仓库根目录的 `Release` 文件夹中。
 
 **或者手动创建项目：**
 

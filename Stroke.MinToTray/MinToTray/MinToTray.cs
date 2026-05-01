@@ -188,7 +188,7 @@ namespace Stroke
 
         private static string GetWindowTitle(IntPtr hWnd)
         {
-            const int nChars = 63;
+            const int nChars = 63; // The NotifyIcon.Text property requires a string of less than 64 characters.
             System.Text.StringBuilder buffer = new System.Text.StringBuilder(nChars);
             if (GetWindowText(hWnd, buffer, nChars) > 0)
                 return buffer.ToString();
